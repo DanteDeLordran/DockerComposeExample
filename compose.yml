@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  dpc:
+    depends_on: 
+      - dpc_db
+    container_name: dpc_backend
+    image: dantedelordran/dpc:0.0.1
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dpc_db:5432/dpc_db_dev
+      SPRING_DATASOURCE_USERNAME: lordran_dev
+      SPRING_DATASOURCE_PASSWORD: lordran_dev
+      SPRING_FLYWAY_URL: jdbc:postgresql://dpc_db:5432/dpc_db_dev
+      SPRING_FLYWAY_USER: lordran_dev
+      SPRING_FLYWAY_PASSWORD: lordran_dev
+    ports:
+      - 8080:8080
+
+  dpc_db:
+    container_name: dpc_db
+    image: postgres:15.1
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=lordran_dev
+      - POSTGRES_PASSWORD=lordran_dev
+      - POSTGRES_DB=dpc_db_dev
+    ports:
+      - 5433:5432
+
+  pgadmin:
+    depends_on:
+      - dpc_db
+    container_name: pgadmin_dpc
+    image: dpage/pgadmin4:6.17
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=lordran@lordran.dev
+      - PGADMIN_DEFAULT_PASSWORD=lordranpass
+    ports:
+      - 80:80
+
+volumes:
+  pgdata:
